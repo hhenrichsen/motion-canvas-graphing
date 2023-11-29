@@ -1,6 +1,6 @@
 {
   "name": "@hhenrichsen/motion-canvas-graphing",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Some graphing components for Motion Canvas.",
   "scripts": {
     "prepare": "husky install",
