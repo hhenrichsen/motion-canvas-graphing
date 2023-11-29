@@ -128,7 +128,8 @@ export class Plot extends Rect {
   }
 
   protected drawShape(context: CanvasRenderingContext2D): void {
-    const tl = this.topLeft().add(this.edgePadding().mul([1, 0]));
+    const halfSize = this.computedSize().mul(0.5);
+    const tl = this.edgePadding().mul([1, 0]).sub(halfSize);
 
     for (let i = 0; i <= this.ticks().floored.x; i++) {
       const startPosition = tl.add(
@@ -225,8 +226,8 @@ export class Plot extends Rect {
     context.textAlign = 'center';
     context.fillText(
       this.xAxisLabel(),
-      this.bottom().x + this.edgePadding().x / 2,
-      this.bottom().y - this.labelPadding().x / 2,
+      this.edgePadding().x / 2,
+      halfSize.y - this.labelPadding().x / 2,
     );
 
     // Draw rotated Y axis label
@@ -235,8 +236,8 @@ export class Plot extends Rect {
     context.textAlign = 'center';
     context.save();
     context.translate(
-      this.left().x + this.labelPadding().y / 2 + this.labelSize().y,
-      this.left().y - this.edgePadding().y / 2,
+      -halfSize.x + this.labelPadding().y / 2 + this.labelSize().y,
+      -this.edgePadding().y / 2,
     );
     context.rotate(-Math.PI / 2);
     context.fillText(this.yAxisLabel(), 0, 0);
@@ -244,9 +245,12 @@ export class Plot extends Rect {
   }
 
   public getPointFromPlotSpace(point: PossibleVector2) {
-    const bottomLeft = this.bottomLeft().add(this.edgePadding().mul([1, -1]));
-    const delta = this.topRight().sub(bottomLeft);
-    return bottomLeft.add(this.toRelativeGridSize(point).mul(delta));
+    const topRight = this.computedSize().mul([0.5, -0.5]);
+    const edgePadding = this.edgePadding().mul([1, -1]);
+    const offset = edgePadding.sub(topRight);
+    const graphSize = topRight.sub(offset);
+
+    return this.toRelativeGridSize(point).mul(graphSize).add(offset);
   }
 
   private mapToX(value: number) {
