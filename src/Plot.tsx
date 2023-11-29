@@ -174,7 +174,8 @@ export class Plot extends Layout {
 
       context.fillStyle = resolveCanvasStyle(this.xAxisTextColor(), context);
       context.font = `${this.tickLabelSize().y}px sans-serif`;
-      context.textAlign = 'right';
+      context.textAlign = 'center';
+      context.textBaseline = 'top';
       context.fillText(
         `${this.xLabelFormatter(this.mapToX(i / this.ticks().x))}`,
         startPosition.x,
@@ -203,13 +204,14 @@ export class Plot extends Layout {
       context.fillStyle = resolveCanvasStyle(this.yAxisTextColor(), context);
       context.font = `${this.tickLabelSize().y}px ${this.fontFamily()}`;
       context.textAlign = 'right';
+      context.textBaseline = 'middle';
       context.fillText(
         `${this.yLabelFormatter(this.mapToY(i / this.ticks().y))}`,
         tl.x -
           this.tickLabelSize().y -
           this.tickOverflow().y -
           this.axisStrokeWidth().y,
-        startPosition.y + this.tickLabelSize().y / 2,
+        startPosition.y,
       );
     }
 
@@ -247,6 +249,7 @@ export class Plot extends Layout {
     context.fillStyle = resolveCanvasStyle(this.xAxisTextColor(), context);
     context.font = `${this.labelSize().y}px ${this.fontFamily()}`;
     context.textAlign = 'center';
+    context.textBaseline = 'alphabetic';
     context.fillText(
       this.xAxisLabel(),
       this.edgePadding().x / 2,
@@ -257,6 +260,7 @@ export class Plot extends Layout {
     context.fillStyle = resolveCanvasStyle(this.yAxisTextColor(), context);
     context.font = `${this.labelSize().y}px ${this.fontFamily()}`;
     context.textAlign = 'center';
+    context.textBaseline = 'alphabetic';
     context.save();
     context.translate(
       -halfSize.x + this.labelPadding().y / 2 + this.labelSize().y,
