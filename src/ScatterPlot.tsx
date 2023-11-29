@@ -14,6 +14,7 @@ export interface ScatterPlotProps extends PlotProps {
   pointRadius?: number;
   pointColor?: PossibleCanvasStyle;
   data?: [number, number][];
+  end?: number;
 }
 
 export class ScatterPlot extends Plot {
