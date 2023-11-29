@@ -12,30 +12,51 @@ import {
 import {
   PossibleColor,
   PossibleVector2,
+  SignalValue,
   SimpleSignal,
   Vector2,
   Vector2Signal,
 } from '@motion-canvas/core';
 
 export interface PlotProps extends RectProps {
-  min?: PossibleVector2;
-  max?: PossibleVector2;
-  ticks?: PossibleVector2;
-  labelSize?: PossibleVector2;
-  labelPadding?: PossibleVector2;
-  tickLabelSize?: PossibleVector2;
-  tickOverflow?: PossibleVector2;
+  minX?: SignalValue<number>;
+  minY?: SignalValue<number>;
+  min?: SignalValue<PossibleVector2>;
 
-  gridStrokeWidth?: number;
-  axisStrokeWidth?: number;
+  maxX?: SignalValue<number>;
+  maxY?: SignalValue<number>;
+  max?: SignalValue<PossibleVector2>;
 
-  xAxisColor?: PossibleColor;
-  xAxisTextColor?: PossibleColor;
-  xAxisLabel?: string;
+  ticksX?: SignalValue<number>;
+  ticksY?: SignalValue<number>;
+  ticks?: SignalValue<PossibleVector2>;
 
-  yAxisColor?: PossibleColor;
-  yAxisTextColor?: PossibleColor;
-  yAxisLabel?: string;
+  labelSizeX?: SignalValue<number>;
+  labelSizeY?: SignalValue<number>;
+  labelSize?: SignalValue<PossibleVector2>;
+
+  labelPaddingX?: SignalValue<number>;
+  labelPaddingY?: SignalValue<number>;
+  labelPadding?: SignalValue<PossibleVector2>;
+
+  tickLabelSizeX?: SignalValue<number>;
+  tickLabelSizeY?: SignalValue<number>;
+  tickLabelSize?: SignalValue<PossibleVector2>;
+
+  tickOverflowX?: SignalValue<number>;
+  tickOverflowY?: SignalValue<number>;
+  tickOverflow?: SignalValue<PossibleVector2>;
+
+  gridStrokeWidth?: SignalValue<number>;
+  axisStrokeWidth?: SignalValue<number>;
+
+  xAxisColor?: SignalValue<PossibleColor>;
+  xAxisTextColor?: SignalValue<PossibleColor>;
+  xAxisLabel?: SignalValue<string>;
+
+  yAxisColor?: SignalValue<PossibleColor>;
+  yAxisTextColor?: SignalValue<PossibleColor>;
+  yAxisLabel?: SignalValue<string>;
 
   xLabelFormatter?: (x: number) => string;
   yLabelFormatter?: (y: number) => string;
