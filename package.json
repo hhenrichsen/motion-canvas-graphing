@@ -15,7 +15,8 @@
     "eslint:fix": "eslint --fix \"**/*.ts?(x)\"",
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
-    "serve": "vite"
+    "serve": "vite",
+    "test": "vitest"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -42,13 +43,15 @@
     "husky": "^8.0.3",
     "lint-staged": "^15.1.0",
     "prettier": "^3.1.0",
+    "puppeteer": "^21.5.2",
     "rimraf": "^5.0.5",
     "rollup": "^4.6.0",
     "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-node-externals": "^6.1.2",
     "typescript": "^5.3.2",
     "vite": "^4.2.1",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^0.34.6"
   },
   "lint-staged": {
     "*.{ts,tsx}": "eslint --fix",
