@@ -18,9 +18,13 @@ export default makeScene2D(function* (view) {
       labelSize={10}
       graphWidth={4}
       graphColor={'red'}
+      opacity={0}
       data={range(0, 26).map(i => [i * 4, random.nextInt(0, 100)])}
     />,
   );
+
+  yield* plot().opacity(1, 2);
+  yield* waitFor(2);
 
   yield* plot().ticks(20, 3);
   yield* plot().size(1000, 2);
@@ -43,11 +47,14 @@ export default makeScene2D(function* (view) {
       max={[Math.PI * 2, 2]}
       xLabelFormatter={x => `${Math.round(x / Math.PI)}π`}
       ticks={[4, 4]}
+      opacity={0}
     />,
   );
 
   plot2().data(plot2().makeGraphData(0.1, x => Math.sin(x)));
 
+  yield* plot2().opacity(1, 2);
+  yield* waitFor(2);
   yield* plot2().end(1, 1);
   yield* waitFor(3);
 
@@ -63,11 +70,14 @@ export default makeScene2D(function* (view) {
       labelSize={10}
       pointRadius={5}
       pointColor={'red'}
+      opacity={0}
       end={0}
       data={range(0, 26).map(i => [i * 4, random.nextInt(0, 100)])}
     />,
   );
 
+  yield* plot3().opacity(1, 2);
+  yield* waitFor(2);
   yield* plot3().end(1, 3, linear);
   yield* waitFor(2);
   yield* plot3().opacity(0, 2);
