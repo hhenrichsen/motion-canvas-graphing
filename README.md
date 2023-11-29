@@ -18,19 +18,16 @@ donate on [Ko-fi](https://ko-fi.com/hhenrichsen).
 ![](https://github.com/hhenrichsen/motion-canvas-graphing/releases/download/latest/output-big.gif)
 
 ```tsx
-import {
-  Plot,
-  LinePlot,
-  ScatterPlot,
-} from "@hhenrichsen/motion-canvas-graphing";
-import { makeScene2D } from "@motion-canvas/2d";
+import {Plot, LinePlot, ScatterPlot} from '@hhenrichsen/motion-canvas-graphing';
+import {makeScene2D} from '@motion-canvas/2d';
 import {
   createRef,
   linear,
   range,
   useRandom,
   waitFor,
-} from "@motion-canvas/core";
+} from '@motion-canvas/core';
+
 export default makeScene2D(function* (view) {
   const random = useRandom();
 
@@ -43,9 +40,9 @@ export default makeScene2D(function* (view) {
       yAxisLabel="Beans"
       labelSize={10}
       graphWidth={4}
-      graphColor={"red"}
-      data={range(0, 26).map((i) => [i * 4, random.nextInt(0, 100)])}
-    />
+      graphColor={'red'}
+      data={range(0, 26).map(i => [i * 4, random.nextInt(0, 100)])}
+    />,
   );
 
   yield* plot().ticks(20, 3);
@@ -62,16 +59,16 @@ export default makeScene2D(function* (view) {
       ref={plot2}
       labelSize={0}
       graphWidth={4}
-      graphColor={"red"}
+      graphColor={'red'}
       min={[-Math.PI * 2, -2]}
       end={0}
       max={[Math.PI * 2, 2]}
-      xLabelFormatter={(x) => `${Math.round(x / Math.PI)}π`}
+      xLabelFormatter={x => `${Math.round(x / Math.PI)}π`}
       ticks={[4, 4]}
-    />
+    />,
   );
 
-  plot2().data(plot2().makeGraphData(0.1, (x) => Math.sin(x)));
+  plot2().data(plot2().makeGraphData(0.1, x => Math.sin(x)));
 
   yield* plot2().end(1, 1);
   yield* waitFor(3);
@@ -87,17 +84,15 @@ export default makeScene2D(function* (view) {
       yAxisLabel="Errors"
       labelSize={10}
       pointRadius={5}
-      pointColor={"red"}
+      pointColor={'red'}
       end={0}
-      data={range(0, 26).map((i) => [i * 4, random.nextInt(0, 100)])}
-    />
+      data={range(0, 26).map(i => [i * 4, random.nextInt(0, 100)])}
+    />,
   );
 
   yield* plot3().end(1, 3, linear);
 
   yield* waitFor(5);
-});
-
 });
 ```
 
