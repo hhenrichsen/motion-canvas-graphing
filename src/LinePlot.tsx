@@ -44,8 +44,8 @@ export class LinePlot extends Plot {
     super(props);
   }
 
-  protected drawShape(context: CanvasRenderingContext2D): void {
-    super.drawShape(context);
+  protected draw(context: CanvasRenderingContext2D): void {
+    super.draw(context);
 
     context.strokeStyle = resolveCanvasStyle(this.graphColor(), context);
     context.lineWidth = this.graphWidth();

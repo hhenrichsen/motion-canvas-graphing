@@ -1,15 +1,17 @@
 import {
   CanvasStyleSignal,
-  Rect,
-  RectProps,
+  Layout,
+  LayoutProps,
   canvasStyleSignal,
   computed,
+  drawRect,
   initial,
   resolveCanvasStyle,
   signal,
   vector2Signal,
 } from '@motion-canvas/2d';
 import {
+  BBox,
   PossibleColor,
   PossibleVector2,
   SignalValue,
@@ -18,7 +20,7 @@ import {
   Vector2Signal,
 } from '@motion-canvas/core';
 
-export interface PlotProps extends RectProps {
+export interface PlotProps extends LayoutProps {
   minX?: SignalValue<number>;
   minY?: SignalValue<number>;
   min?: SignalValue<PossibleVector2>;
@@ -62,7 +64,7 @@ export interface PlotProps extends RectProps {
   yLabelFormatter?: (y: number) => string;
 }
 
-export class Plot extends Rect {
+export class Plot extends Layout {
   @initial(Vector2.zero)
   @vector2Signal('min')
   public declare readonly min: Vector2Signal<this>;
@@ -148,7 +150,7 @@ export class Plot extends Rect {
     this.yLabelFormatter = props.yLabelFormatter ?? (y => y.toFixed(0));
   }
 
-  protected drawShape(context: CanvasRenderingContext2D): void {
+  protected draw(context: CanvasRenderingContext2D): void {
     const halfSize = this.computedSize().mul(0.5);
     const tl = this.edgePadding().mul([1, 0]).sub(halfSize);
 
@@ -263,6 +265,14 @@ export class Plot extends Rect {
     context.rotate(-Math.PI / 2);
     context.fillText(this.yAxisLabel(), 0, 0);
     context.restore();
+  }
+
+  public getPath(): Path2D {
+    const path = new Path2D();
+    const box = BBox.fromSizeCentered(this.size());
+    drawRect(path, box);
+
+    return path;
   }
 
   public getPointFromPlotSpace(point: PossibleVector2) {
