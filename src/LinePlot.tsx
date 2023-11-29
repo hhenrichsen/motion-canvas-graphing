@@ -72,6 +72,9 @@ export class LinePlot extends Plot {
     resolution: number,
     f: (x: number) => number,
   ): [number, number][] {
-    return range(this.min().x, this.max().x, resolution).map(x => [x, f(x)]);
+    return range(this.min().x, this.max().x + resolution, resolution).map(x => [
+      x,
+      f(x),
+    ]);
   }
 }

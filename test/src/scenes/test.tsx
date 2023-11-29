@@ -32,6 +32,7 @@ export default makeScene2D(function* (view) {
   const plot2 = createRef<LinePlot>();
   view.add(
     <LinePlot
+      clip
       size={500}
       ref={plot2}
       labelSize={0}
