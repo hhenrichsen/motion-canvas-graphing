@@ -1,7 +1,7 @@
 {
-  "name": "motion-canvas-component-library",
-  "version": "0.0.0",
-  "description": "",
+  "name": "@hhenrichsen/motion-canvas-graphing",
+  "version": "1.0.0",
+  "description": "Some graphing components for Motion Canvas.",
   "scripts": {
     "prepare": "husky install",
     "build:dev": "rollup -c rollup.config.mjs",
@@ -23,8 +23,8 @@
   "keywords": [
     "motion-canvas"
   ],
-  "author": "",
-  "homepage": "",
+  "author": "Hunter Henrichsen <hunter.henrichsen@gmail.com>",
+  "homepage": "https://github.com/hhenrichsen/motion-canvas-graphing",
   "dependencies": {
     "@motion-canvas/2d": "^3.11.0",
     "@motion-canvas/core": "^3.11.0",
