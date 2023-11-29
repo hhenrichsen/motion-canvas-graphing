@@ -2,12 +2,16 @@
 
 [![npm](https://img.shields.io/npm/v/%40hhenrichsen%2Fmotion-canvas-graphing?style=for-the-badge&logo=npm)](https://www.npmjs.com/package/@hhenrichsen/motion-canvas-graphing)
 [![GitHub](https://img.shields.io/github/v/tag/hhenrichsen/motion-canvas-graphing?style=for-the-badge&logo=github&label=GitHub) ](https://github.com/hhenrichsen/motion-canvas-graphing)
+[![Static Badge](https://img.shields.io/badge/Donate-Kofi?style=for-the-badge&label=KoFi&color=%23FF5722)](https://ko-fi.com/hhenrichsen)
 
 A library to help you make graphs in motion canvas.
 
 If you use this in your videos, I would appreciate credit via a link to this
 repo, or a mention by name. I would also love to see them; feel free to show me
 on the motion canvas discord (I'm `@Hunter` on there).
+
+If you want to support the development of this and other libraries, feel free to
+donate on [Ko-fi](https://ko-fi.com/hhenrichsen).
 
 ## Demo
 
