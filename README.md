@@ -1,5 +1,85 @@
 # My First Motion Canvas Component Library
 
+## Demo
+
+![](https://github.com/hhenrichsen/motion-canvas-graphing/releases/download/latest/output-big.gif)
+
+```tsx
+import {makeScene2D} from '@motion-canvas/2d/lib/scenes';
+import {waitFor} from '@motion-canvas/core/lib/flow';
+import {Plot} from '@components/Plot';
+import {createRef, linear, range, useRandom} from '@motion-canvas/core';
+import {ScatterPlot} from '@components/ScatterPlot';
+import {LinePlot} from '@components/LinePlot';
+
+export default makeScene2D(function* (view) {
+  const random = useRandom();
+
+  const plot = createRef<Plot>();
+  view.add(
+    <LinePlot
+      size={500}
+      ref={plot}
+      xAxisLabel="Time"
+      yAxisLabel="Beans"
+      labelSize={10}
+      graphWidth={4}
+      graphColor={'red'}
+      data={range(0, 26).map(i => [i * 4, random.nextInt(0, 100)])}
+    />,
+  );
+
+  yield* plot().ticks(20, 3);
+  yield* plot().size(1000, 2);
+  yield* plot().labelSize(30, 2);
+  yield* plot().min(-100, 2);
+  yield* plot().opacity(0, 2);
+  plot().remove();
+
+  const plot2 = createRef<LinePlot>();
+  view.add(
+    <LinePlot
+      size={500}
+      ref={plot2}
+      labelSize={0}
+      graphWidth={4}
+      graphColor={'red'}
+      min={[-Math.PI * 2, -2]}
+      end={0}
+      max={[Math.PI * 2, 2]}
+      xLabelFormatter={x => `${Math.round(x / Math.PI)}π`}
+      ticks={[4, 4]}
+    />,
+  );
+
+  plot2().data(plot2().makeGraphData(0.1, x => Math.sin(x)));
+
+  yield* plot2().end(1, 1);
+  yield* waitFor(3);
+
+  yield* plot2().opacity(0, 2);
+
+  const plot3 = createRef<ScatterPlot>();
+  view.add(
+    <ScatterPlot
+      size={500}
+      ref={plot3}
+      xAxisLabel="Time"
+      yAxisLabel="Errors"
+      labelSize={10}
+      pointRadius={5}
+      pointColor={'red'}
+      end={0}
+      data={range(0, 26).map(i => [i * 4, random.nextInt(0, 100)])}
+    />,
+  );
+
+  yield* plot3().end(1, 3, linear);
+
+  yield* waitFor(5);
+});
+```
+
 ## Using this library
 
 ### From git
@@ -22,7 +102,7 @@ export default defineConfig({
 
 ### From npm
 
-1. Run `npm install <library name here>`
+1. Run `npm install @hhenrichsen/motion-canvas-graphing`
 1. Set your `vite.config.ts` to look like this:
 
 ```ts
@@ -36,47 +116,3 @@ export default defineConfig({
   },
 });
 ```
-
-## Why use this repo?
-
-This repo gives you a couple benefits over starting from scratch:
-
-- The same linting options as main motion-canvas code, which helps to keep the
-  community on the same page.
-- A build pipeline in place with:
-  - support for `UMD` modules, which gives you automatic support for future
-    improvements to the ecosystem
-  - automatic watch support, allowing you to develop quickly
-  - automatic compilation and splitting for your TypeScript, allowing it to be
-    used in a variety of environments.
-
-## Getting Started
-
-1. Clone this repo.
-1. Run
-   `git remote add upstream https://github.com/hhenrichsen/motion-canvas-component-library-template`
-   to gain the ability to update when this repo gets enhancements (via
-   `git pull upstream main`)
-1. Update the package name in `package.json` and run `npm install`. I recommend
-   something like `@username/library-name`.
-1. Update the UMD name of this package in `rollup.config.mjs`
-1. Update the title of this README.
-1. Run `npm run watch` -- this will create some files in the `lib` folder for
-   you, and rebuild them here when you make changes.
-1. Start developing a component in the `src` folder, and make sure that it's
-   exported from the `index.ts` file.
-1. Run `npm install <path to this repo>` in a motion canvas project -- this will
-   add a link to this repo in your project.
-1. Import components from this library and verify that they work:
-
-```tsx
-import {SwitchComponent} from '@username/library-name';
-```
-
-## Publishing to NPM
-
-1. Run `npm run build` one last time.
-1. Verify that the package works when installed with
-   `npm install <path to this repo>`.
-1. Run `npm publish --access public`. You may have to authenticate if this is
-   your first time publishing a package.
