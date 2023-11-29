@@ -1,4 +1,10 @@
-# My First Motion Canvas Component Library
+# Motion Canvas Graphing
+
+A library to help you make graphs in motion canvas.
+
+If you use this in your videos, I would appreciate credit via a link to this
+repo, or a mention by name. I would also love to see them; feel free to show me
+on the motion canvas discord (I'm `@Hunter` on there).
 
 ## Demo
 
