@@ -69,6 +69,32 @@ export default makeScene2D(function* (view) {
   );
 
   yield* plot3().end(1, 3, linear);
+  yield* waitFor(2);
+  yield* plot3().opacity(0, 2);
+
+  const plot4 = createRef<LinePlot>();
+  view.add(
+    <LinePlot
+      clip
+      size={500}
+      ref={plot4}
+      labelSize={0}
+      graphWidth={4}
+      graphColor={'red'}
+      minX={-10}
+      maxX={10}
+      minY={-2}
+      maxY={50}
+      end={0}
+      opacity={0}
+      ticks={[4, 4]}
+    />,
+  );
+
+  plot4().data(plot4().makeGraphData(0.1, x => Math.pow(x, 2)));
+  yield* plot4().opacity(1, 2);
+  yield* waitFor(2);
+  yield* plot4().end(1, 1);
 
   yield* waitFor(5);
 });
