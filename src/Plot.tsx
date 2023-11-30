@@ -41,6 +41,10 @@ export interface PlotProps extends LayoutProps {
   labelPaddingY?: SignalValue<number>;
   labelPadding?: SignalValue<PossibleVector2>;
 
+  tickPaddingX?: SignalValue<number>;
+  tickPaddingY?: SignalValue<number>;
+  tickPadding?: SignalValue<PossibleVector2>;
+
   tickLabelSizeX?: SignalValue<number>;
   tickLabelSizeY?: SignalValue<number>;
   tickLabelSize?: SignalValue<PossibleVector2>;
@@ -81,7 +85,7 @@ export class Plot extends Layout {
   @vector2Signal('labelSize')
   public declare readonly labelSize: Vector2Signal<this>;
 
-  @initial(Vector2.one.mul(10))
+  @initial(Vector2.one.mul(5))
   @vector2Signal('labelPadding')
   public declare readonly labelPadding: Vector2Signal<this>;
 
@@ -92,6 +96,10 @@ export class Plot extends Layout {
   @initial(Vector2.one.mul(5))
   @vector2Signal('tickOverflow')
   public declare readonly tickOverflow: Vector2Signal<this>;
+
+  @initial(Vector2.one.mul(6))
+  @vector2Signal('tickPadding')
+  public declare readonly tickPadding: Vector2Signal<this>;
 
   @initial(Vector2.one.mul(1))
   @vector2Signal('gridStrokeWidth')
@@ -128,8 +136,6 @@ export class Plot extends Layout {
   public readonly xLabelFormatter: (x: number) => string;
   public readonly yLabelFormatter: (y: number) => string;
 
-  private progress = Vector2.createSignal();
-
   @computed()
   private edgePadding() {
     return this.labelSize()
@@ -139,24 +145,22 @@ export class Plot extends Layout {
       .add(this.axisStrokeWidth());
   }
 
-  @computed()
-  private gridSize() {
-    return this.size().sub(this.edgePadding());
-  }
-
   public constructor(props?: PlotProps) {
     super(props);
     this.xLabelFormatter = props.xLabelFormatter ?? (x => x.toFixed(0));
     this.yLabelFormatter = props.yLabelFormatter ?? (y => y.toFixed(0));
   }
 
+  public cacheBBox(): BBox {
+    return BBox.fromSizeCentered(this.size().add(this.edgePadding().mul(2)));
+  }
+
   protected draw(context: CanvasRenderingContext2D): void {
-    const halfSize = this.computedSize().mul(0.5);
-    const tl = this.edgePadding().mul([1, 0]).sub(halfSize);
+    const halfSize = this.computedSize().mul(-0.5);
 
     for (let i = 0; i <= this.ticks().floored.x; i++) {
-      const startPosition = tl.add(
-        this.gridSize().mul([i / this.ticks().x, 1]),
+      const startPosition = halfSize.add(
+        this.computedSize().mul([i / this.ticks().x, 1]),
       );
 
       context.beginPath();
@@ -167,7 +171,7 @@ export class Plot extends Layout {
           this.axisStrokeWidth().x / 2 +
           this.axisStrokeWidth().x / 2,
       );
-      context.lineTo(startPosition.x, tl.y);
+      context.lineTo(startPosition.x, halfSize.y);
       context.strokeStyle = resolveCanvasStyle(this.xAxisColor(), context);
       context.lineWidth = this.gridStrokeWidth().x;
       context.stroke();
@@ -180,23 +184,20 @@ export class Plot extends Layout {
         `${this.xLabelFormatter(this.mapToX(i / this.ticks().x))}`,
         startPosition.x,
         startPosition.y +
-          this.tickLabelSize().x +
+          this.axisStrokeWidth().x +
           this.tickOverflow().x +
-          this.axisStrokeWidth().x,
+          Math.floor(this.tickPadding().x / 2),
       );
     }
 
     for (let i = 0; i <= this.ticks().floored.y; i++) {
-      const startPosition = tl.add(
-        this.gridSize().mul([1, 1 - i / this.ticks().y]),
+      const startPosition = halfSize.add(
+        this.computedSize().mul([1, 1 - i / this.ticks().y]),
       );
 
       context.beginPath();
       context.moveTo(startPosition.x, startPosition.y);
-      context.lineTo(
-        tl.x - this.tickOverflow().y - this.axisStrokeWidth().y,
-        startPosition.y,
-      );
+      context.lineTo(halfSize.x - this.tickOverflow().y, startPosition.y);
       context.strokeStyle = resolveCanvasStyle(this.yAxisColor(), context);
       context.lineWidth = this.gridStrokeWidth().y;
       context.stroke();
@@ -207,10 +208,10 @@ export class Plot extends Layout {
       context.textBaseline = 'middle';
       context.fillText(
         `${this.yLabelFormatter(this.mapToY(i / this.ticks().y))}`,
-        tl.x -
-          this.tickLabelSize().y -
+        halfSize.x -
+          this.axisStrokeWidth().y -
           this.tickOverflow().y -
-          this.axisStrokeWidth().y,
+          Math.floor(this.tickPadding().y / 2),
         startPosition.y,
       );
     }
@@ -252,8 +253,14 @@ export class Plot extends Layout {
     context.textBaseline = 'alphabetic';
     context.fillText(
       this.xAxisLabel(),
-      this.edgePadding().x / 2,
-      halfSize.y - this.labelPadding().x / 2,
+      0,
+      -halfSize.y +
+        this.axisStrokeWidth().x +
+        this.tickOverflow().x +
+        this.tickLabelSize().x +
+        this.tickPadding().x +
+        Math.floor(this.labelPadding().x) +
+        this.labelSize().x,
     );
 
     // Draw rotated Y axis label
@@ -263,8 +270,14 @@ export class Plot extends Layout {
     context.textBaseline = 'alphabetic';
     context.save();
     context.translate(
-      -halfSize.x + this.labelPadding().y / 2 + this.labelSize().y,
-      -this.edgePadding().y / 2,
+      halfSize.x -
+        this.axisStrokeWidth().y -
+        this.tickOverflow().y -
+        this.tickLabelSize().y -
+        this.tickPadding().y -
+        Math.floor(this.labelPadding().y / 2) -
+        this.labelSize().y,
+      0,
     );
     context.rotate(-Math.PI / 2);
     context.fillText(this.yAxisLabel(), 0, 0);
@@ -280,12 +293,12 @@ export class Plot extends Layout {
   }
 
   public getPointFromPlotSpace(point: PossibleVector2) {
-    const topRight = this.computedSize().mul([0.5, -0.5]);
-    const edgePadding = this.edgePadding().mul([1, -1]);
-    const offset = edgePadding.sub(topRight);
-    const graphSize = topRight.sub(offset);
+    const bottomLeft = this.computedSize().mul([-0.5, 0.5]);
 
-    return this.toRelativeGridSize(point).mul(graphSize).add(offset);
+    return this.toRelativeGridSize(point)
+      .mul([1, -1])
+      .mul(this.computedSize())
+      .add(bottomLeft);
   }
 
   private mapToX(value: number) {
