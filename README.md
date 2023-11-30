@@ -29,54 +29,57 @@ import {createRef, linear, waitFor} from '@motion-canvas/core';
 
 export default makeScene2D(function* (view) {
   const random = useRandom();
-
-  const plot = createRef<LinePlot>();
+  const plot = createRef<Plot>();
+  const scatter = createRef<ScatterPlot>();
   view.add(
-    <LinePlot
+    <Plot
+      size={500}
+      ref={plot}
+      labelX="Time"
+      labelY="Errors"
+      labelSize={10}
+      opacity={0}
+    >
+      <ScatterPlot
+        pointRadius={5}
+        pointColor={'red'}
+        ref={scatter}
+        end={0}
+        data={range(0, 26).map(i => [i * 4, random.nextInt(0, 100)])}
+      />
+    </Plot>,
+  );
+
+  yield* plot().opacity(1, 2);
+  yield* waitFor(2);
+  yield scatter().end(1, 3, linear);
+  yield* waitFor(2);
+  yield* plot().opacity(0, 2);
+
+  const plot2 = createRef<Plot>();
+  const line2 = createRef<LinePlot>();
+  view.add(
+    <Plot
       clip
       size={500}
-      ref={plot4}
+      ref={plot2}
       labelSize={0}
-      graphWidth={4}
-      graphColor={'red'}
       minX={-10}
       maxX={10}
       minY={-2}
       maxY={50}
-      end={0}
       opacity={0}
       ticks={[4, 4]}
-    />,
+      offset={[-1, 0]}
+    >
+      <LinePlot lineWidth={4} stroke={'red'} ref={line2} />
+    </Plot>,
   );
 
-  yield* plot().opacity(1, 2);
-  plot().data(plot().makeGraphData(0.1, x => Math.pow(x, 2)));
-  yield* plot().end(1, 3, linear);
-  yield* waitFor(2);
-  yield* plot().opacity(0, 2);
-
-  plot().remove();
-
-  const plot2 = createRef<ScatterPlot>();
-  view.add(
-    <ScatterPlot
-      size={500}
-      ref={plot3}
-      xAxisLabel="Time"
-      yAxisLabel="Errors"
-      labelSize={10}
-      pointRadius={5}
-      pointColor={'red'}
-      end={0}
-      opacity={0}
-      data={range(0, 26).map(i => [i * 4, random.nextInt(0, 100)])}
-    />,
-  );
-
+  line2().data(plot2().makeGraphData(0.1, x => Math.pow(x, 2)));
   yield* plot2().opacity(1, 2);
-  yield* plot2().end(1, 3, linear);
   yield* waitFor(2);
-  yield* plot2().opacity(0, 2);
+  yield* line2().end(1, 1);
 
   yield* waitFor(5);
 });
