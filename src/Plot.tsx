@@ -18,6 +18,7 @@ import {
   SimpleSignal,
   Vector2,
   Vector2Signal,
+  range,
 } from '@motion-canvas/core';
 
 export interface PlotProps extends LayoutProps {
@@ -282,6 +283,11 @@ export class Plot extends Layout {
     context.rotate(-Math.PI / 2);
     context.fillText(this.labelY(), 0, 0);
     context.restore();
+
+    if (this.clip()) {
+      context.clip(this.getPath());
+    }
+    this.drawChildren(context);
   }
 
   public getPath(): Path2D {
@@ -311,5 +317,15 @@ export class Plot extends Layout {
 
   private toRelativeGridSize(p: PossibleVector2) {
     return new Vector2(p).sub(this.min()).div(this.max().sub(this.min()));
+  }
+
+  public makeGraphData(
+    resolution: number,
+    f: (x: number) => number,
+  ): [number, number][] {
+    return range(this.min().x, this.max().x + resolution, resolution).map(x => [
+      x,
+      f(x),
+    ]);
   }
 }
