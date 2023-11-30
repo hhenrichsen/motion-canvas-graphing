@@ -27,7 +27,8 @@ export default makeScene2D(function* (view) {
   yield* waitFor(2);
 
   yield* plot().ticks(20, 3);
-  yield* plot().size(1000, 2);
+  yield* plot().tickLabelSize(20, 2);
+  yield* plot().size(800, 2);
   yield* plot().labelSize(30, 2);
   yield* plot().min(-100, 2);
   yield* plot().opacity(0, 2);
