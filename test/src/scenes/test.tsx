@@ -11,6 +11,7 @@ export default makeScene2D(function* (view) {
   const plot = createRef<Plot>();
   view.add(
     <LinePlot
+      offset={[-1, 0]}
       size={500}
       ref={plot}
       xAxisLabel="Time"

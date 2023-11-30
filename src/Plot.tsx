@@ -3,7 +3,6 @@ import {
   Layout,
   LayoutProps,
   canvasStyleSignal,
-  computed,
   drawRect,
   initial,
   resolveCanvasStyle,
@@ -128,22 +127,6 @@ export class Plot extends Layout {
   public readonly xLabelFormatter: (x: number) => string;
   public readonly yLabelFormatter: (y: number) => string;
 
-  private progress = Vector2.createSignal();
-
-  @computed()
-  private edgePadding() {
-    return this.labelSize()
-      .add(this.labelPadding())
-      .add(this.tickLabelSize().mul([Math.log10(this.max().y) + 1, 2]))
-      .add(this.tickOverflow())
-      .add(this.axisStrokeWidth());
-  }
-
-  @computed()
-  private gridSize() {
-    return this.size().sub(this.edgePadding());
-  }
-
   public constructor(props?: PlotProps) {
     super(props);
     this.xLabelFormatter = props.xLabelFormatter ?? (x => x.toFixed(0));
@@ -151,12 +134,11 @@ export class Plot extends Layout {
   }
 
   protected draw(context: CanvasRenderingContext2D): void {
-    const halfSize = this.computedSize().mul(0.5);
-    const tl = this.edgePadding().mul([1, 0]).sub(halfSize);
+    const halfSize = this.computedSize().mul(-0.5);
 
     for (let i = 0; i <= this.ticks().floored.x; i++) {
-      const startPosition = tl.add(
-        this.gridSize().mul([i / this.ticks().x, 1]),
+      const startPosition = halfSize.add(
+        this.computedSize().mul([i / this.ticks().x, 1]),
       );
 
       context.beginPath();
@@ -167,7 +149,7 @@ export class Plot extends Layout {
           this.axisStrokeWidth().x / 2 +
           this.axisStrokeWidth().x / 2,
       );
-      context.lineTo(startPosition.x, tl.y);
+      context.lineTo(startPosition.x, halfSize.y);
       context.strokeStyle = resolveCanvasStyle(this.xAxisColor(), context);
       context.lineWidth = this.gridStrokeWidth().x;
       context.stroke();
@@ -187,16 +169,13 @@ export class Plot extends Layout {
     }
 
     for (let i = 0; i <= this.ticks().floored.y; i++) {
-      const startPosition = tl.add(
-        this.gridSize().mul([1, 1 - i / this.ticks().y]),
+      const startPosition = halfSize.add(
+        this.computedSize().mul([1, 1 - i / this.ticks().y]),
       );
 
       context.beginPath();
       context.moveTo(startPosition.x, startPosition.y);
-      context.lineTo(
-        tl.x - this.tickOverflow().y - this.axisStrokeWidth().y,
-        startPosition.y,
-      );
+      context.lineTo(halfSize.x - this.tickOverflow().y, startPosition.y);
       context.strokeStyle = resolveCanvasStyle(this.yAxisColor(), context);
       context.lineWidth = this.gridStrokeWidth().y;
       context.stroke();
@@ -207,7 +186,7 @@ export class Plot extends Layout {
       context.textBaseline = 'middle';
       context.fillText(
         `${this.yLabelFormatter(this.mapToY(i / this.ticks().y))}`,
-        tl.x -
+        halfSize.x -
           this.tickLabelSize().y -
           this.tickOverflow().y -
           this.axisStrokeWidth().y,
@@ -245,30 +224,30 @@ export class Plot extends Layout {
     context.lineWidth = this.axisStrokeWidth().y;
     context.stroke();
 
-    // Draw X axis label
-    context.fillStyle = resolveCanvasStyle(this.xAxisTextColor(), context);
-    context.font = `${this.labelSize().y}px ${this.fontFamily()}`;
-    context.textAlign = 'center';
-    context.textBaseline = 'alphabetic';
-    context.fillText(
-      this.xAxisLabel(),
-      this.edgePadding().x / 2,
-      halfSize.y - this.labelPadding().x / 2,
-    );
+    // // Draw X axis label
+    // context.fillStyle = resolveCanvasStyle(this.xAxisTextColor(), context);
+    // context.font = `${this.labelSize().y}px ${this.fontFamily()}`;
+    // context.textAlign = 'center';
+    // context.textBaseline = 'alphabetic';
+    // context.fillText(
+    //   this.xAxisLabel(),
+    //   this.edgePadding().x / 2,
+    //   halfSize.y - this.labelPadding().x / 2,
+    // );
 
-    // Draw rotated Y axis label
-    context.fillStyle = resolveCanvasStyle(this.yAxisTextColor(), context);
-    context.font = `${this.labelSize().y}px ${this.fontFamily()}`;
-    context.textAlign = 'center';
-    context.textBaseline = 'alphabetic';
-    context.save();
-    context.translate(
-      -halfSize.x + this.labelPadding().y / 2 + this.labelSize().y,
-      -this.edgePadding().y / 2,
-    );
-    context.rotate(-Math.PI / 2);
-    context.fillText(this.yAxisLabel(), 0, 0);
-    context.restore();
+    // // Draw rotated Y axis label
+    // context.fillStyle = resolveCanvasStyle(this.yAxisTextColor(), context);
+    // context.font = `${this.labelSize().y}px ${this.fontFamily()}`;
+    // context.textAlign = 'center';
+    // context.textBaseline = 'alphabetic';
+    // context.save();
+    // context.translate(
+    //   -halfSize.x + this.labelPadding().y / 2 + this.labelSize().y,
+    //   -this.edgePadding().y / 2,
+    // );
+    // context.rotate(-Math.PI / 2);
+    // context.fillText(this.yAxisLabel(), 0, 0);
+    // context.restore();
   }
 
   public getPath(): Path2D {
@@ -280,12 +259,12 @@ export class Plot extends Layout {
   }
 
   public getPointFromPlotSpace(point: PossibleVector2) {
-    const topRight = this.computedSize().mul([0.5, -0.5]);
-    const edgePadding = this.edgePadding().mul([1, -1]);
-    const offset = edgePadding.sub(topRight);
-    const graphSize = topRight.sub(offset);
+    const bottomLeft = this.computedSize().mul([-0.5, 0.5]);
 
-    return this.toRelativeGridSize(point).mul(graphSize).add(offset);
+    return this.toRelativeGridSize(point)
+      .mul([1, -1])
+      .mul(this.computedSize())
+      .add(bottomLeft);
   }
 
   private mapToX(value: number) {
