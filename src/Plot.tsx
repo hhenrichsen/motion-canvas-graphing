@@ -56,16 +56,16 @@ export interface PlotProps extends LayoutProps {
   gridStrokeWidth?: SignalValue<number>;
   axisStrokeWidth?: SignalValue<number>;
 
-  xAxisColor?: SignalValue<PossibleColor>;
-  xAxisTextColor?: SignalValue<PossibleColor>;
-  xAxisLabel?: SignalValue<string>;
+  labelX?: SignalValue<string>;
+  axisColorX?: SignalValue<PossibleColor>;
+  axisTextColorX?: SignalValue<PossibleColor>;
 
-  yAxisColor?: SignalValue<PossibleColor>;
-  yAxisTextColor?: SignalValue<PossibleColor>;
-  yAxisLabel?: SignalValue<string>;
+  labelY?: SignalValue<string>;
+  axisColorY?: SignalValue<PossibleColor>;
+  axisTextColorY?: SignalValue<PossibleColor>;
 
-  xLabelFormatter?: (x: number) => string;
-  yLabelFormatter?: (y: number) => string;
+  labelFormatterX?: (x: number) => string;
+  labelFormatterY?: (y: number) => string;
 }
 
 export class Plot extends Layout {
@@ -111,30 +111,30 @@ export class Plot extends Layout {
 
   @initial('white')
   @canvasStyleSignal()
-  public declare readonly xAxisColor: CanvasStyleSignal<this>;
+  public declare readonly axisColorX: CanvasStyleSignal<this>;
 
   @initial('white')
   @canvasStyleSignal()
-  public declare readonly xAxisTextColor: CanvasStyleSignal<this>;
+  public declare readonly axisTextColorX: CanvasStyleSignal<this>;
 
   @initial('')
   @signal()
-  public declare readonly xAxisLabel: SimpleSignal<string, this>;
+  public declare readonly labelX: SimpleSignal<string, this>;
 
   @initial('white')
   @canvasStyleSignal()
-  public declare readonly yAxisColor: CanvasStyleSignal<this>;
+  public declare readonly axisColorY: CanvasStyleSignal<this>;
 
   @initial('white')
   @canvasStyleSignal()
-  public declare readonly yAxisTextColor: CanvasStyleSignal<this>;
+  public declare readonly axisTextColorY: CanvasStyleSignal<this>;
 
   @initial('')
   @signal()
-  public declare readonly yAxisLabel: SimpleSignal<string, this>;
+  public declare readonly labelY: SimpleSignal<string, this>;
 
-  public readonly xLabelFormatter: (x: number) => string;
-  public readonly yLabelFormatter: (y: number) => string;
+  public readonly labelFormatterX: (x: number) => string;
+  public readonly labelFormatterY: (y: number) => string;
 
   @computed()
   private edgePadding() {
@@ -147,8 +147,8 @@ export class Plot extends Layout {
 
   public constructor(props?: PlotProps) {
     super(props);
-    this.xLabelFormatter = props.xLabelFormatter ?? (x => x.toFixed(0));
-    this.yLabelFormatter = props.yLabelFormatter ?? (y => y.toFixed(0));
+    this.labelFormatterX = props.labelFormatterX ?? (x => x.toFixed(0));
+    this.labelFormatterY = props.labelFormatterY ?? (y => y.toFixed(0));
   }
 
   public cacheBBox(): BBox {
@@ -172,16 +172,16 @@ export class Plot extends Layout {
           this.axisStrokeWidth().x / 2,
       );
       context.lineTo(startPosition.x, halfSize.y);
-      context.strokeStyle = resolveCanvasStyle(this.xAxisColor(), context);
+      context.strokeStyle = resolveCanvasStyle(this.axisColorX(), context);
       context.lineWidth = this.gridStrokeWidth().x;
       context.stroke();
 
-      context.fillStyle = resolveCanvasStyle(this.xAxisTextColor(), context);
+      context.fillStyle = resolveCanvasStyle(this.axisTextColorX(), context);
       context.font = `${this.tickLabelSize().y}px sans-serif`;
       context.textAlign = 'center';
       context.textBaseline = 'top';
       context.fillText(
-        `${this.xLabelFormatter(this.mapToX(i / this.ticks().x))}`,
+        `${this.labelFormatterX(this.mapToX(i / this.ticks().x))}`,
         startPosition.x,
         startPosition.y +
           this.axisStrokeWidth().x +
@@ -198,16 +198,16 @@ export class Plot extends Layout {
       context.beginPath();
       context.moveTo(startPosition.x, startPosition.y);
       context.lineTo(halfSize.x - this.tickOverflow().y, startPosition.y);
-      context.strokeStyle = resolveCanvasStyle(this.yAxisColor(), context);
+      context.strokeStyle = resolveCanvasStyle(this.axisColorY(), context);
       context.lineWidth = this.gridStrokeWidth().y;
       context.stroke();
 
-      context.fillStyle = resolveCanvasStyle(this.yAxisTextColor(), context);
+      context.fillStyle = resolveCanvasStyle(this.axisTextColorY(), context);
       context.font = `${this.tickLabelSize().y}px ${this.fontFamily()}`;
       context.textAlign = 'right';
       context.textBaseline = 'middle';
       context.fillText(
-        `${this.yLabelFormatter(this.mapToY(i / this.ticks().y))}`,
+        `${this.labelFormatterY(this.mapToY(i / this.ticks().y))}`,
         halfSize.x -
           this.axisStrokeWidth().y -
           this.tickOverflow().y -
@@ -227,7 +227,7 @@ export class Plot extends Layout {
       yAxisEndPoint.x - this.gridStrokeWidth().y / 2,
       yAxisEndPoint.y + this.gridStrokeWidth().y / 2,
     );
-    context.strokeStyle = resolveCanvasStyle(this.xAxisColor(), context);
+    context.strokeStyle = resolveCanvasStyle(this.axisColorX(), context);
     context.lineWidth = this.axisStrokeWidth().x;
     context.stroke();
 
@@ -242,17 +242,17 @@ export class Plot extends Layout {
       xAxisEndPoint.x + this.gridStrokeWidth().x / 2,
       xAxisEndPoint.y + this.gridStrokeWidth().x / 2,
     );
-    context.strokeStyle = resolveCanvasStyle(this.yAxisColor(), context);
+    context.strokeStyle = resolveCanvasStyle(this.axisColorY(), context);
     context.lineWidth = this.axisStrokeWidth().y;
     context.stroke();
 
     // Draw X axis label
-    context.fillStyle = resolveCanvasStyle(this.xAxisTextColor(), context);
+    context.fillStyle = resolveCanvasStyle(this.axisTextColorX(), context);
     context.font = `${this.labelSize().y}px ${this.fontFamily()}`;
     context.textAlign = 'center';
     context.textBaseline = 'alphabetic';
     context.fillText(
-      this.xAxisLabel(),
+      this.labelX(),
       0,
       -halfSize.y +
         this.axisStrokeWidth().x +
@@ -264,7 +264,7 @@ export class Plot extends Layout {
     );
 
     // Draw rotated Y axis label
-    context.fillStyle = resolveCanvasStyle(this.yAxisTextColor(), context);
+    context.fillStyle = resolveCanvasStyle(this.axisTextColorY(), context);
     context.font = `${this.labelSize().y}px ${this.fontFamily()}`;
     context.textAlign = 'center';
     context.textBaseline = 'alphabetic';
@@ -280,7 +280,7 @@ export class Plot extends Layout {
       0,
     );
     context.rotate(-Math.PI / 2);
-    context.fillText(this.yAxisLabel(), 0, 0);
+    context.fillText(this.labelY(), 0, 0);
     context.restore();
   }
 
