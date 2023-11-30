@@ -13,8 +13,8 @@ export default makeScene2D(function* (view) {
     <LinePlot
       size={500}
       ref={plot}
-      xAxisLabel="Time"
-      yAxisLabel="Beans"
+      labelX="Time"
+      labelY="Beans"
       labelSize={10}
       graphWidth={4}
       graphColor={'red'}
@@ -46,7 +46,7 @@ export default makeScene2D(function* (view) {
       min={[-Math.PI * 2, -2]}
       end={0}
       max={[Math.PI * 2, 2]}
-      xLabelFormatter={x => `${Math.round(x / Math.PI)}π`}
+      labelFormatterX={x => `${Math.round(x / Math.PI)}π`}
       ticks={[4, 4]}
       opacity={0}
     />,
@@ -66,8 +66,8 @@ export default makeScene2D(function* (view) {
     <ScatterPlot
       size={500}
       ref={plot3}
-      xAxisLabel="Time"
-      yAxisLabel="Errors"
+      labelX="Time"
+      labelY="Errors"
       labelSize={10}
       pointRadius={5}
       pointColor={'red'}
