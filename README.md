@@ -4,6 +4,10 @@
 [![GitHub](https://img.shields.io/github/v/tag/hhenrichsen/motion-canvas-graphing?style=for-the-badge&logo=github&label=GitHub) ](https://github.com/hhenrichsen/motion-canvas-graphing)
 [![Static Badge](https://img.shields.io/badge/Donate-Kofi?style=for-the-badge&label=KoFi&color=%23FF5722)](https://ko-fi.com/hhenrichsen)
 
+<!-- prettier-ignore -->
+> **Warning**<br>
+This library is deprecated in favor of [canvas-commons](https://github.com/hhenrichsen/canvas-commons), and has been merged into that library as of 0.9.0.
+
 A library to help you make graphs in motion canvas.
 
 If you use this in your videos, I would appreciate credit via a link to this
